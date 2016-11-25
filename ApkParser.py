@@ -12,11 +12,15 @@ class Parser(object):
 		self.current_path = self.current_path()
 		self.output = self.current_path + "/output"
 		self.apk_path = path[1]
-		self.dex_to_jar_path = path[2]
+		self.dex_to_jar_path = self.get_dex_to_jar_path()
 		self.apk_name = self.parseName(self.apk_path)
 		self.parent_path = os.path.dirname(self.apk_path)
 		self.process = None
 	
+	def get_dex_to_jar_path(self):
+		with open(self.current_path + "/Config.py") as f:
+			return f.readlines()[3].split("=")[1].strip()
+
 	def current_path(self):
 		return os.path.normpath(os.path.join(os.getcwd(),os.path.dirname(__file__)))
 
