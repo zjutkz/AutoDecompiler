@@ -6,11 +6,12 @@ import subprocess
 import threading
 import os
 import shutil 
+import time
 
 class Parser(object):
 	def __init__(self,path):
 		self.current_path = self.current_path()
-		self.output = self.current_path + "/output"
+		self.output = self.current_path + "/output-" + str(time.time())
 		self.apk_path = path[1]
 		self.dex_to_jar_path = self.get_dex_to_jar_path()
 		self.apk_name = self.parseName(self.apk_path)
@@ -83,6 +84,10 @@ class Parser(object):
 			if not dex.find("classes"): 
 				shutil.move(dex, self.output)    
 
+	def removeTempApk(self):
+		removalPath = self.dex_to_jar_path + "/" + self.apk_name + ".apk"
+		shutil.move(removalPath, self.apk_path)   
+
 	def run(self):
 		self.copyApk()
 		self.changeEnv()
@@ -91,6 +96,7 @@ class Parser(object):
 		self.dex_to_jar()
 		self.createDir()
 		self.restoreFile()
+		self.removeTempApk()
 
 def parse():
 	parser = Parser(sys.argv)
@@ -98,5 +104,3 @@ def parse():
 
 if __name__ == "__main__":
     parse()
-
-
